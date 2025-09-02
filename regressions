@@ -1,0 +1,29 @@
+import pandas as pd
+
+# Load Excel file
+df = pd.read_excel('/content/weight.xlsx')  # Path after uploading
+
+# Ensure columns are named 'X' and 'Y'
+df.columns = ['X', 'Y']
+
+# Calculate means
+x_mean = df['X'].mean()
+y_mean = df['Y'].mean()
+
+# Add regression helper columns
+df['xi - x̄'] = df['X'] - x_mean
+df['yi - ȳ'] = df['Y'] - y_mean
+df['(xi - x̄)^2'] = df['xi - x̄'] ** 2
+df['(yi - ȳ)^2'] = df['yi - ȳ'] ** 2
+
+# Display full table
+df
+import matplotlib.pyplot as plt
+
+plt.scatter(df['X'], df['Y'], color='blue', label='Actual Data')
+plt.title('Scatter Plot of X vs Y')
+plt.xlabel('X')
+plt.ylabel('Y')
+plt.legend()
+plt.grid(True)
+plt.show()
