@@ -1,0 +1,57 @@
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score
+import matplotlib.pyplot as plt
+iris = load_iris()
+X, y = iris.data, iris.target
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+k_range = range(1, 21)
+accuracies = []
+
+for k in k_range:
+    knn = KNeighborsClassifier(n_neighbors=k)
+    knn.fit(X_train, y_train)
+    y_pred = knn.predict(X_test)
+    acc = accuracy_score(y_test, y_pred)
+    accuracies.append(acc)
+
+plt.plot(k_range, accuracies, marker='o')
+plt.title("K-NN Classification Accuracy vs K")
+plt.xlabel("Number of Neighbors (K)")
+plt.ylabel("Accuracy")
+plt.grid()
+plt.show()
+
+from sklearn.datasets import fetch_california_housing
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.metrics import mean_squared_error
+import numpy as np
+
+data = fetch_california_housing()
+X, y = data.data, data.target
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+k_range = range(1, 21)
+mse_scores = []
+
+for k in k_range:
+    model = KNeighborsRegressor(n_neighbors=k)
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+    mse = mean_squared_error(y_test, y_pred)
+    mse_scores.append(mse)
+
+plt.plot(k_range, mse_scores, marker='o', color='red')
+plt.title('k-NN Regression MSE vs K')
+plt.xlabel('K value')
+plt.ylabel('Mean Squared Error')
+plt.grid(True)
+plt.show()
+
+best_k = mse_scores.index(min(mse_scores)) + 1
+print(f"Best K: {best_k}, Lowest MSE: {min(mse_scores):.4f}")
