@@ -1,30 +1,64 @@
-import pandas as pd
 
-# Load Excel file
-df = pd.read_excel('/content/weight.xlsx')  # Path after uploading
-
-# Ensure columns are named 'X' and 'Y'
-df.columns = ['X', 'Y']
-
-# Calculate means
-x_mean = df['X'].mean()
-y_mean = df['Y'].mean()
-
-# Add regression helper columns
-df['xi - x̄'] = df['X'] - x_mean
-df['yi - ȳ'] = df['Y'] - y_mean
-df['(xi - x̄)^2'] = df['xi - x̄'] ** 2
-df['(yi - ȳ)^2'] = df['yi - ȳ'] ** 2
-
-# Display full table
-df
+import numpy as np
 import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score
 
-plt.scatter(df['X'], df['Y'], color='blue', label='Actual Data')
-plt.title('Scatter Plot of X vs Y')
-plt.xlabel('X')
-plt.ylabel('Y')
+X = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9]).reshape(-1, 1)
+y = np.array([35, 40, 50, 55, 60, 65, 70, 78, 85])
+
+model = LinearRegression()
+model.fit(X, y)
+y_pred = model.predict(X)
+
+plt.scatter(X, y, color='blue', label='Actual')
+plt.plot(X, y_pred, color='red', label='Predicted')
+plt.title('Linear Regression')
+plt.xlabel('Study Hours')
+plt.ylabel('Exam Score')
 plt.legend()
 plt.grid(True)
 plt.show()
 
+print("Linear Regression R² Score:", r2_score(y, y_pred))
+Linear Regression R² Score: 0.9931241255246852
+
+
+from sklearn.preprocessing import PolynomialFeatures
+
+poly = PolynomialFeatures(degree=2)
+X_poly = poly.fit_transform(X)
+
+poly_model = LinearRegression()
+poly_model.fit(X_poly, y)
+
+plt.scatter(X, y, color='blue', label='Actual')
+plt.plot(X, y_poly_pred, color='green', label='Polynomial Fit')
+plt.title('Polynomial Regression (Degree 2)')
+plt.xlabel('Study Hours')
+plt.ylabel('Exam Score')
+plt.legend()
+plt.grid(True)
+plt.show()
+
+print("Polynomial Regression R² Score:", r2_score(y, y_poly_pred))
+Polynomial Regression R² Score: 0.9931559246270419
+
+from sklearn.datasets import load_iris
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+
+iris = load_iris()
+X = iris.data[:, :2]  # Use first 2 features for simplicity
+y = (iris.target == 0).astype(int)  # Setosa = 1, Others = 0
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+log_model = LogisticRegression()
+log_model.fit(X_train, y_train)
+y_pred = log_model.predict(X_test)
+
+print("Logistic Regression Accuracy:", accuracy_score(y_test, y_pred))
+print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred))
+print("Classification Report:\n", classification_report(y_test, y_pred))
